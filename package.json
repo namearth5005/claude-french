@@ -1,0 +1,13 @@
+{
+  "name": "claude-french",
+  "version": "1.0.0",
+  "description": "Learn French inside Claude Code — immersion, practice, and Anki-powered flashcards",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nambouchara/claude-french"
+  },
+  "dependencies": {
+    "ts-fsrs": "^5.2.3"
+  }
+}
