@@ -1,142 +1,179 @@
 #!/bin/bash
 set -e
 
+RESET="\033[0m"
+BOLD="\033[1m"
+DIM="\033[2m"
+RED="\033[0;31m"
 GREEN="\033[0;32m"
 YELLOW="\033[0;33m"
+BLUE="\033[0;34m"
+MAGENTA="\033[0;35m"
 CYAN="\033[0;36m"
-BOLD="\033[1m"
-RESET="\033[0m"
+WHITE="\033[1;37m"
+BG_GREEN="\033[42m"
+BG_BLUE="\033[44m"
 
 REPO_URL="https://github.com/namearth5005/claude-french.git"
 INSTALL_DIR="$HOME/.claude/plugins/cache/claude-french/1.0.0"
 DATA_DIR="$HOME/.claude/french"
 SETTINGS_FILE="$HOME/.claude/settings.json"
 
-info() {
-  printf "${CYAN}%s${RESET}\n" "$1"
+step_num=0
+total_steps=5
+
+step() {
+  step_num=$((step_num + 1))
+  printf "\n${DIM}─────────────────────────────────────────────────${RESET}\n"
+  printf "${WHITE}  [${step_num}/${total_steps}]  %s${RESET}\n" "$1"
+  printf "${DIM}─────────────────────────────────────────────────${RESET}\n"
 }
 
-success() {
-  printf "${GREEN}%s${RESET}\n" "$1"
+ok() {
+  printf "  ${GREEN}✓${RESET}  %s\n" "$1"
 }
 
-warn() {
-  printf "${YELLOW}%s${RESET}\n" "$1"
+skip() {
+  printf "  ${DIM}–${RESET}  ${DIM}%s${RESET}\n" "$1"
 }
 
-error() {
-  printf "\033[0;31m%s${RESET}\n" "$1"
+fail() {
+  printf "  ${RED}✗${RESET}  %s\n" "$1"
   exit 1
 }
 
-echo ""
-printf "${BOLD}${CYAN}"
-cat <<'BANNER'
-╭─────────────────────────────────────────────╮
-│  claude-french installer                    │
-│  Learn French inside Claude Code            │
-╰─────────────────────────────────────────────╯
-BANNER
-printf "${RESET}"
-echo ""
+note() {
+  printf "  ${DIM}%s${RESET}\n" "$1"
+}
 
-info "Checking prerequisites..."
+clear
+printf "\n"
+printf "${BOLD}${BLUE}"
+cat <<'ART'
+         ┌─────────────────────────────────┐
+         │                                 │
+         │    🇫🇷  claude-french            │
+         │                                 │
+         │    Learn French inside          │
+         │    Claude Code                  │
+         │                                 │
+         └─────────────────────────────────┘
+ART
+printf "${RESET}"
+printf "\n"
+printf "  ${DIM}Passive immersion · Active practice · Anki flashcards${RESET}\n"
+printf "  ${DIM}github.com/namearth5005/claude-french${RESET}\n"
+
+
+step "Prerequisites"
 
 if ! command -v git >/dev/null 2>&1; then
-  error "git is required but not installed. Please install git and try again."
+  fail "git is required. Install it and try again."
 fi
-success "  git found"
+ok "git"
 
-info "Installing plugin..."
+if command -v npm >/dev/null 2>&1; then
+  ok "npm"
+  HAS_NPM=true
+else
+  skip "npm not found (optional — needed for full FSRS support)"
+  HAS_NPM=false
+fi
+
+if command -v jq >/dev/null 2>&1; then
+  ok "jq"
+elif command -v python3 >/dev/null 2>&1; then
+  ok "python3 (will use for JSON updates)"
+else
+  skip "jq/python3 not found (will need manual settings update)"
+fi
+
+
+step "Install plugin"
 
 if [ -d "$INSTALL_DIR/.git" ]; then
-  info "  Existing installation found, pulling latest..."
-  cd "$INSTALL_DIR" && git pull --ff-only
+  note "Existing installation found, updating..."
+  cd "$INSTALL_DIR" && git pull --ff-only --quiet 2>/dev/null
+  ok "Updated to latest"
 else
   mkdir -p "$(dirname "$INSTALL_DIR")"
-  git clone "$REPO_URL" "$INSTALL_DIR"
+  git clone --quiet "$REPO_URL" "$INSTALL_DIR" 2>/dev/null
+  ok "Cloned to ~/.claude/plugins/cache/claude-french/"
 fi
-success "  Plugin cloned to $INSTALL_DIR"
 
-info "Installing dependencies..."
-cd "$INSTALL_DIR"
-if command -v npm >/dev/null 2>&1; then
+if [ "$HAS_NPM" = true ]; then
+  cd "$INSTALL_DIR"
   npm install --production --silent 2>/dev/null
-  success "  Dependencies installed"
-else
-  warn "  npm not found, skipping dependency install. Install Node.js for full functionality."
+  ok "Dependencies installed"
 fi
 
-info "Setting up user data..."
+
+step "Initialize data"
 
 mkdir -p "$DATA_DIR"
 
 if [ ! -f "$DATA_DIR/french_config.json" ]; then
   cp "$INSTALL_DIR/data/default_config.json" "$DATA_DIR/french_config.json"
-  success "  Created french_config.json"
+  ok "Config created at ~/.claude/french/"
 else
-  warn "  french_config.json already exists, skipping"
+  skip "Config already exists"
 fi
 
 if [ ! -f "$DATA_DIR/french_flashcards.json" ]; then
   printf '{"cards": []}\n' > "$DATA_DIR/french_flashcards.json"
-  success "  Created french_flashcards.json"
+  ok "Flashcard deck initialized"
 else
-  warn "  french_flashcards.json already exists, skipping"
+  skip "Flashcard deck already exists"
 fi
 
 if [ ! -f "$DATA_DIR/french_stats.json" ]; then
   printf '{"sessions": []}\n' > "$DATA_DIR/french_stats.json"
-  success "  Created french_stats.json"
+  ok "Stats file initialized"
 else
-  warn "  french_stats.json already exists, skipping"
+  skip "Stats file already exists"
 fi
 
-echo ""
-printf "${BOLD}Seed starter deck with 50 beginner flashcards? (y/n) ${RESET}"
-read -r SEED_DECK </dev/tty
-if [ "$SEED_DECK" = "y" ] || [ "$SEED_DECK" = "Y" ]; then
+SEED_DECK="y"
+if [ -t 0 ]; then
+  printf "\n  ${BOLD}Seed 50 beginner flashcards?${RESET} ${DIM}(Y/n)${RESET} "
+  read -r SEED_DECK
+  SEED_DECK="${SEED_DECK:-y}"
+else
+  note "Non-interactive mode — auto-seeding starter deck"
+fi
+
+if [ "$SEED_DECK" = "y" ] || [ "$SEED_DECK" = "Y" ] || [ "$SEED_DECK" = "" ]; then
   cp "$INSTALL_DIR/data/starter_deck.json" "$DATA_DIR/french_flashcards.json"
-  success "  Starter deck loaded!"
+  ok "50 beginner cards loaded"
 else
-  info "  Skipped starter deck"
+  skip "Starter deck skipped"
 fi
 
-info "Registering plugin in Claude settings..."
+
+step "Register plugin"
 
 mkdir -p "$(dirname "$SETTINGS_FILE")"
 
-if [ ! -f "$SETTINGS_FILE" ]; then
-  printf '{\n  "enabledPlugins": {\n    "claude-french@namearth5005": true\n  }\n}\n' > "$SETTINGS_FILE"
-  success "  Created settings.json with plugin enabled"
-else
+register_plugin() {
+  if [ ! -f "$SETTINGS_FILE" ]; then
+    printf '{\n  "enabledPlugins": {\n    "claude-french@namearth5005": true\n  }\n}\n' > "$SETTINGS_FILE"
+    ok "Created settings.json with plugin enabled"
+    return 0
+  fi
+
   if command -v jq >/dev/null 2>&1; then
     TEMP_FILE=$(mktemp)
     if jq '.enabledPlugins["claude-french@namearth5005"] = true' "$SETTINGS_FILE" > "$TEMP_FILE" 2>/dev/null; then
       mv "$TEMP_FILE" "$SETTINGS_FILE"
-      success "  Plugin registered via jq"
-    else
-      rm -f "$TEMP_FILE"
-      warn "  Could not update settings.json with jq, trying fallback..."
-      if command -v python3 >/dev/null 2>&1; then
-        python3 -c "
-import json, sys
-with open('$SETTINGS_FILE', 'r') as f:
-    data = json.load(f)
-if 'enabledPlugins' not in data:
-    data['enabledPlugins'] = {}
-data['enabledPlugins']['claude-french@namearth5005'] = True
-with open('$SETTINGS_FILE', 'w') as f:
-    json.dump(data, f, indent=2)
-    f.write('\n')
-" && success "  Plugin registered via python3" || warn "  Could not update settings.json automatically. Please add \"claude-french@namearth5005\": true to enabledPlugins in $SETTINGS_FILE"
-      else
-        warn "  Neither jq nor python3 found. Please add \"claude-french@namearth5005\": true to enabledPlugins in $SETTINGS_FILE"
-      fi
+      ok "Plugin registered in settings.json"
+      return 0
     fi
-  elif command -v python3 >/dev/null 2>&1; then
+    rm -f "$TEMP_FILE"
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
     python3 -c "
-import json, sys
+import json
 with open('$SETTINGS_FILE', 'r') as f:
     data = json.load(f)
 if 'enabledPlugins' not in data:
@@ -145,28 +182,40 @@ data['enabledPlugins']['claude-french@namearth5005'] = True
 with open('$SETTINGS_FILE', 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
-" && success "  Plugin registered via python3" || warn "  Could not update settings.json automatically. Please add \"claude-french@namearth5005\": true to enabledPlugins in $SETTINGS_FILE"
-  else
-    warn "  Neither jq nor python3 found. Please add \"claude-french@namearth5005\": true to enabledPlugins in $SETTINGS_FILE"
+" 2>/dev/null && ok "Plugin registered in settings.json" && return 0
   fi
-fi
 
-echo ""
+  printf "\n"
+  printf "  ${YELLOW}Manual step needed:${RESET}\n"
+  printf "  Add this to ${BOLD}~/.claude/settings.json${RESET} under enabledPlugins:\n"
+  printf "  ${DIM}\"claude-french@namearth5005\": true${RESET}\n"
+  return 0
+}
+
+register_plugin
+
+
+step "Done"
+
+printf "\n"
 printf "${BOLD}${GREEN}"
-cat <<'SUCCESS'
-╭─ Installed! ────────────────────────────────╮
-│                                             │
-│  Try these commands in Claude Code:         │
-│                                             │
-│  /french-settings  — Configure preferences  │
-│  /french           — Start practicing       │
-│  /flashcards       — Review vocabulary      │
-│                                             │
-│  French immersion is ON by default.         │
-│  Use /french-settings frequency off         │
-│  to pause during focused work.              │
-│                                             │
-╰─────────────────────────────────────────────╯
-SUCCESS
+cat <<'DONE'
+  ╭───────────────────────────────────────────────╮
+  │                                               │
+  │   ✓  claude-french installed successfully     │
+  │                                               │
+  ╰───────────────────────────────────────────────╯
+DONE
 printf "${RESET}"
-echo ""
+printf "\n"
+printf "  ${BOLD}Commands${RESET}\n"
+printf "\n"
+printf "    ${CYAN}/french-settings${RESET}   Configure level, frequency, topics\n"
+printf "    ${CYAN}/french${RESET}            Practice conversation, scenarios, drills\n"
+printf "    ${CYAN}/flashcards${RESET}        Review cards with spaced repetition\n"
+printf "\n"
+printf "  ${DIM}French immersion is ${RESET}${GREEN}ON${RESET}${DIM} by default.${RESET}\n"
+printf "  ${DIM}Pause anytime: ${RESET}/french-settings frequency off\n"
+printf "\n"
+printf "  ${DIM}Bonne chance ! 🇫🇷${RESET}\n"
+printf "\n"
