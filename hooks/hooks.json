@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/.claude/plugins/cache/claude-french/1.0.0/hooks/immersion-hook.sh"
+            "command": "$HOME/.claude/plugins/cache/namearth5005/claude-french/1.0.0/hooks/immersion-hook.sh"
           }
         ]
       }

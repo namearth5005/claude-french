@@ -15,7 +15,7 @@ BG_GREEN="\033[42m"
 BG_BLUE="\033[44m"
 
 REPO_URL="https://github.com/namearth5005/claude-french.git"
-INSTALL_DIR="$HOME/.claude/plugins/cache/claude-french/1.0.0"
+INSTALL_DIR="$HOME/.claude/plugins/cache/namearth5005/claude-french/1.0.0"
 DATA_DIR="$HOME/.claude/french"
 SETTINGS_FILE="$HOME/.claude/settings.json"
 
