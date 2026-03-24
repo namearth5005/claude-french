@@ -11,23 +11,22 @@ You are running an Anki-style spaced repetition flashcard session. Be concise an
 
 ### Locate the deck
 
-Use Glob to find the flashcard deck:
-- Pattern: `**/memory/french_flashcards.json`
-- Search in: `~/.claude/projects/`
+Read the flashcard deck directly:
+- Path: `~/.claude/french/french_flashcards.json`
 
-If the file is not found or is empty, ask the user:
+If the file is not found or is empty (or contains `{"cards": []}`), ask the user:
 
 ```
 No flashcard deck found. Would you like to seed it from the starter deck (50 beginner cards)?
 ```
 
-If yes, use Glob to find the plugin's starter deck at `**/claude-french/data/starter_deck.json`, read it, then write its contents to the project memory directory as `french_flashcards.json`.
+If yes, use Glob to find the plugin's starter deck at `**/claude-french/data/starter_deck.json`, read it, then write its contents to `~/.claude/french/french_flashcards.json`.
 
 If no, create an empty deck: `{ "cards": [] }`.
 
 ### Load config
 
-Use Glob to find `**/memory/french_config.json` in `~/.claude/projects/`. Read it to get `review_direction` and `daily_new_cards`. If not found, use defaults: `review_direction = "french-to-english"`, `daily_new_cards = 10`.
+Read `~/.claude/french/french_config.json` to get `review_direction` and `daily_new_cards`. If not found, use defaults: `review_direction = "french-to-english"`, `daily_new_cards = 10`.
 
 ## Step 2: Parse Arguments
 
@@ -133,7 +132,7 @@ Compute `elapsed_days`: if `last_review` is not null, the number of days between
 | Good (3) | 2.5 | 3 | "review" |
 | Easy (4) | 5.0 | 5 | "review" |
 
-Difficulty starts at 5.0 for new cards (override the 0 from starter deck on first review).
+Difficulty starts at 5.0 for new cards.
 
 #### Learning cards (state = "learning")
 
@@ -273,7 +272,7 @@ Count cards by state and compute due counts:
 - **Empty deck with no starter**: Show stats as all zeros and suggest using `/flashcards add` to create cards.
 - **Invalid rating input**: Re-prompt with `Please enter 1-4 (Again, Hard, Good, Easy):`.
 - **User wants to quit mid-session**: If the user says "quit", "stop", "q", or "exit", save the deck immediately and show a partial session summary using the same format as Step 6 but with the counts so far.
-- **Difficulty field is 0 on starter cards**: When a card has `difficulty` of 0, treat it as 5.0 on first review (this is the initial default; starter deck ships with 0 to indicate unreviewed).
+- **Difficulty field**: All cards ship with `difficulty` of 5.0. If a card has difficulty of 0 (from an older deck), treat it as 5.0.
 - **Cards with future next_review**: Skip them entirely; they are not due.
 - **Scheduled_days rounding**: Always round to nearest integer, minimum 1 day.
 

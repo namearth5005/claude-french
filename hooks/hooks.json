@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/immersion-hook.sh\""
+            "command": "$HOME/.claude/plugins/cache/claude-french/1.0.0/hooks/immersion-hook.sh"
           }
         ]
       }

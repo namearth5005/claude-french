@@ -21,7 +21,7 @@ You: Fix the null check bug in auth.ts
 Claude: I found the issue -- a missing null check on line 42.
 
 --- fr ------------------------------------------------
-  C'est regle (It's fixed) -- the auth flow works now.
+  C'est réglé (It's fixed) -- the auth flow works now.
 -------------------------------------------------------
 ```
 
@@ -32,7 +32,7 @@ Claude: I found the issue -- a missing null check on line 42.
 │  FLASHCARD  3/12          ○ ○ ● ○ ○ ○ ○ ○  │
 ├─────────────────────────────────────────────┤
 │                                             │
-│          Comment ca va ?                    │
+│          Comment ça va ?                    │
 │                                             │
 │  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─  │
 │  How are you?                    [beginner] │
@@ -243,14 +243,14 @@ The plugin ships with 10 role-play scenarios:
 
 | Scenario | Level | Topic |
 |----------|-------|-------|
-| Au cafe -- Order coffee and pastry | beginner | food |
+| Au café -- Order coffee and pastry | beginner | food |
 | Au restaurant -- Dinner from ordering to paying | intermediate | food |
 | Demander son chemin -- Ask for directions | beginner | travel |
 | Acheter un billet de train -- Buy a train ticket | beginner | travel |
-| Arrivee a l'hotel -- Check into a hotel | intermediate | travel |
-| Au marche -- Buy produce at an outdoor market | beginner | shopping |
-| Dans un magasin de vetements -- Try on clothes | intermediate | shopping |
-| Se presenter -- Introduce yourself | beginner | social |
+| Arrivée à l'hôtel -- Check into a hotel | intermediate | travel |
+| Au marché -- Buy produce at an outdoor market | beginner | shopping |
+| Dans un magasin de vêtements -- Try on clothes | intermediate | shopping |
+| Se présenter -- Introduce yourself | beginner | social |
 | Faire la conversation -- Small talk with a colleague | intermediate | social |
 | Demander de l'aide -- Ask for help when lost | beginner | social |
 

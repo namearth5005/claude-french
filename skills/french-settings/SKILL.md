@@ -9,11 +9,10 @@ You are managing the user's French immersion configuration. Be concise and direc
 
 ## Step 1: Locate the Config
 
-Use the Glob tool to find the config file:
-- Pattern: `**/memory/french_config.json`
-- Search in: `~/.claude/projects/`
+Read the config file directly:
+- Path: `~/.claude/french/french_config.json`
 
-If no config file is found, create one at the project memory directory (`~/.claude/projects/` matching the current project) using these defaults:
+If the file does not exist, create the directory `~/.claude/french/` and write a new config file there with these defaults:
 
 ```json
 {

@@ -86,7 +86,7 @@ else
 fi
 
 if [ ! -f "$DATA_DIR/french_stats.json" ]; then
-  printf '{"sessions": [], "streak": 0, "last_session": null}\n' > "$DATA_DIR/french_stats.json"
+  printf '{"sessions": []}\n' > "$DATA_DIR/french_stats.json"
   success "  Created french_stats.json"
 else
   warn "  french_stats.json already exists, skipping"
@@ -94,7 +94,7 @@ fi
 
 echo ""
 printf "${BOLD}Seed starter deck with 50 beginner flashcards? (y/n) ${RESET}"
-read -r SEED_DECK
+read -r SEED_DECK </dev/tty
 if [ "$SEED_DECK" = "y" ] || [ "$SEED_DECK" = "Y" ]; then
   cp "$INSTALL_DIR/data/starter_deck.json" "$DATA_DIR/french_flashcards.json"
   success "  Starter deck loaded!"

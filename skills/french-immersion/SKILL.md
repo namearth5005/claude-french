@@ -9,7 +9,7 @@ You are operating in passive French immersion mode. These instructions apply to 
 
 ## Step 1: Load Config
 
-At the start of the session, use Glob to find `**/memory/french_config.json` in `~/.claude/projects/`. Read it with the Read tool.
+At the start of the session, read `~/.claude/french/french_config.json` with the Read tool.
 
 If not found, use defaults:
 - `level = "beginner"`
@@ -67,12 +67,12 @@ Draw from these curated banks based on the user's level. Prioritize variety -- d
 | au revoir | goodbye |
 | merci | thank you |
 | merci beaucoup | thank you very much |
-| s'il te plait | please (casual) |
-| s'il vous plait | please (formal) |
+| s'il te plaît | please (casual) |
+| s'il vous plaît | please (formal) |
 | de rien | you're welcome |
-| ca va | how's it going |
-| a bientot | see you soon |
-| bonne journee | have a good day |
+| ça va | how's it going |
+| à bientôt | see you soon |
+| bonne journée | have a good day |
 | bonsoir | good evening |
 | salut | hi / bye (informal) |
 
@@ -82,18 +82,18 @@ Draw from these curated banks based on the user's level. Prioritize variety -- d
 |--------|---------|
 | alors | so / then |
 | d'accord | okay / agreed |
-| voila | there you go |
+| voilà | there you go |
 | parfait | perfect |
-| bien sur | of course |
+| bien sûr | of course |
 | exactement | exactly |
 | en fait | actually |
 | c'est bon | it's good |
-| tres bien | very good |
+| très bien | very good |
 | oui | yes |
 | non | no |
 | bien | good / well |
 | allons-y | let's go |
-| c'est ca | that's it |
+| c'est ça | that's it |
 | entendu | understood |
 
 ### Intermediate -- Expressions
@@ -101,16 +101,16 @@ Draw from these curated banks based on the user's level. Prioritize variety -- d
 | French | English |
 |--------|---------|
 | pas de souci | no worries |
-| ca marche | that works |
+| ça marche | that works |
 | c'est parti | let's go / here we go |
 | on y va | let's do it |
-| sans probleme | no problem |
-| tout a fait | absolutely |
+| sans problème | no problem |
+| tout à fait | absolutely |
 | je comprends | I understand |
-| bien joue | well played |
+| bien joué | well played |
 | en revanche | on the other hand |
 | autrement dit | in other words |
-| a vrai dire | to tell the truth |
+| à vrai dire | to tell the truth |
 | je te / vous en prie | you're welcome (warm) |
 | pas mal | not bad |
 | bref | in short |
@@ -118,20 +118,20 @@ Draw from these curated banks based on the user's level. Prioritize variety -- d
 | n'est-ce pas | isn't it / right |
 | justement | precisely / as it happens |
 | quand meme | still / all the same |
-| a mon avis | in my opinion |
+| à mon avis | in my opinion |
 | il me semble que | it seems to me that |
 
 ### Advanced -- Idiomatic Expressions
 
 | French | English |
 |--------|---------|
-| ce n'est pas la mer a boire | it's not that hard |
-| petit a petit l'oiseau fait son nid | little by little |
+| ce n'est pas la mer à boire | it's not that hard |
+| petit à petit l'oiseau fait son nid | little by little |
 | avoir le cafard | to feel down |
 | mettre les points sur les i | to dot the i's / to be precise |
-| c'est la cerise sur le gateau | it's the cherry on top |
-| revenons a nos moutons | let's get back on topic |
-| il ne faut pas mettre la charrue avant les boeufs | don't put the cart before the horse |
+| c'est la cerise sur le gâteau | it's the cherry on top |
+| revenons à nos moutons | let's get back on topic |
+| il ne faut pas mettre la charrue avant les bœufs | don't put the cart before the horse |
 | avoir du pain sur la planche | to have a lot of work to do |
 | ce n'est pas sorcier | it's not rocket science |
 | couper la poire en deux | to compromise |
@@ -145,15 +145,15 @@ Draw from these curated banks based on the user's level. Prioritize variety -- d
 
 When the user's configured `topics` or the current coding context suggests a domain, lean into relevant vocabulary:
 
-**food**: un cafe (a coffee), bon appetit (enjoy your meal), la recette (the recipe), delicieux (delicious), gourmand (food-loving), un repas (a meal)
+**food**: un café (a coffee), bon appétit (enjoy your meal), la recette (the recipe), délicieux (delicious), gourmand (food-loving), un repas (a meal)
 
-**travel**: le voyage (the trip), la gare (the train station), l'aeroport (the airport), le billet (the ticket), la valise (the suitcase), le chemin (the path/way)
+**travel**: le voyage (the trip), la gare (the train station), l'aéroport (the airport), le billet (the ticket), la valise (the suitcase), le chemin (the path/way)
 
-**work**: le projet (the project), la reunion (the meeting), le bureau (the office/desk), le collegue (the colleague), la tache (the task), le delai (the deadline)
+**work**: le projet (the project), la réunion (the meeting), le bureau (the office/desk), le collègue (the colleague), la tâche (the task), le délai (the deadline)
 
 **shopping**: le prix (the price), la boutique (the shop), acheter (to buy), combien (how much), une bonne affaire (a good deal)
 
-**social**: l'ami (the friend), la fete (the party), se retrouver (to meet up), bavarder (to chat), sympa (nice/cool)
+**social**: l'ami (the friend), la fête (the party), se retrouver (to meet up), bavarder (to chat), sympa (nice/cool)
 
 **numbers**: un (one), deux (two), trois (three), dix (ten), vingt (twenty), cent (hundred)
 
@@ -169,7 +169,7 @@ Weave French directly into the sentence with the translation in parentheses:
 
 - "I found the bug. *Parfait* (Perfect) -- here's the fix."
 - "*Alors* (So), let me check that configuration file."
-- "That should work now. *Tres bien* (Very good)!"
+- "That should work now. *Très bien* (Very good)!"
 - "Let me look into that, *un moment* (one moment)."
 
 Use italics (asterisks) around the French phrase for visual distinction.
@@ -180,7 +180,7 @@ For slightly longer phrases or when starting a response:
 
 ```
 --- fr ------------------------------------------------
-  Tres bien (Very good) -- let me check that file.
+  Très bien (Very good) -- let me check that file.
 -------------------------------------------------------
 ```
 
@@ -209,11 +209,11 @@ Do not use French when:
 
 Good opportunities for French:
 - Greetings at the start of a response.
-- Affirmations when something works ("Parfait!", "Tres bien!", "Ca marche!").
+- Affirmations when something works ("Parfait!", "Très bien!", "Ça marche!").
 - Transitions between sections of a response ("Alors...", "En fait...", "Voila...").
-- Wrap-up phrases at the end ("Bonne journee!", "A bientot!").
+- Wrap-up phrases at the end ("Bonne journee!", "À bientôt!").
 - When the topic naturally connects to a French domain (food code = food vocab, travel API = travel vocab).
-- Simple status updates ("I found the file. *Voila* (There you go).").
+- Simple status updates ("I found the file. *Voilà* (There you go).").
 
 ## Step 6: Auto-Collect to Flashcard Deck
 
@@ -221,7 +221,7 @@ Every time you use a French phrase in a response, silently save it to the flashc
 
 ### Process
 
-1. Use Glob to find `**/memory/french_flashcards.json` in `~/.claude/projects/`.
+1. Read `~/.claude/french/french_flashcards.json`.
 2. If the file exists, read it with the Read tool.
 3. Check whether a card with the same `french` field already exists (case-insensitive comparison, ignoring accents). If it does, skip -- do not add a duplicate.
 4. If the phrase is new, append a card to the `cards` array:
@@ -249,7 +249,7 @@ Every time you use a French phrase in a response, silently save it to the flashc
 
 Use the current Unix timestamp in milliseconds for `{timestamp_ms}`.
 
-5. Write the updated deck back to the file using the Edit tool (append the new card JSON before the closing `]` of the cards array). Use 2-space indentation.
+5. Write the updated deck back to the file using the Write tool. Use 2-space indentation.
 
 6. If the flashcard file does not exist, do NOT create it -- the user needs to initialize their deck first via `/flashcards`. Simply skip the save silently.
 

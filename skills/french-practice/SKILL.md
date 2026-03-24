@@ -11,17 +11,17 @@ You are running an interactive French practice session. Be warm but concise. All
 
 ### Config
 
-Use Glob to find `**/memory/french_config.json` in `~/.claude/projects/`. Read it with the Read tool. If not found, use defaults: `level = "beginner"`, `formality = "casual"`, `topics = ["food", "travel", "greetings"]`, `review_direction = "french-to-english"`, `daily_new_cards = 10`.
+Read `~/.claude/french/french_config.json` with the Read tool. If not found, use defaults: `level = "beginner"`, `formality = "casual"`, `topics = ["food", "travel", "greetings"]`, `review_direction = "french-to-english"`, `daily_new_cards = 10`.
 
 ### Flashcard deck
 
-Use Glob to find `**/memory/french_flashcards.json` in `~/.claude/projects/`. Read it. If not found, set `cards_due = 0` and `total_cards = 0`.
+Read `~/.claude/french/french_flashcards.json`. If not found, set `cards_due = 0` and `total_cards = 0`.
 
 To compute `cards_due`: count cards where `next_review` is not null AND `next_review` <= today's date (YYYY-MM-DD).
 
 ### Stats
 
-Use Glob to find `**/memory/french_stats.json` in `~/.claude/projects/`. Read it. If not found, treat streak as 0.
+Read `~/.claude/french/french_stats.json`. If not found, treat streak as 0.
 
 The stats file format:
 
@@ -134,7 +134,7 @@ When the user types "done", "quit", "exit", "stop", or "fini":
 
 If `session_vocab` is empty, replace the word list with "No new vocabulary this session." and skip the save prompt.
 
-2. If the user says yes (y/yes/oui): add each word from `session_vocab` as a new flashcard. Use Glob to find `**/memory/french_flashcards.json`, read the deck, append cards, and write it back. Each card:
+2. If the user says yes (y/yes/oui): add each word from `session_vocab` as a new flashcard. Read `~/.claude/french/french_flashcards.json`, append cards, and write it back. Each card:
 
 ```json
 {
@@ -222,7 +222,7 @@ Same as Conversation Libre -- follow the user's configured level for how much En
 
 ### Setup
 
-Load the flashcard deck from `**/memory/french_flashcards.json`.
+Load the flashcard deck from `~/.claude/french/french_flashcards.json`.
 
 If the deck is empty or not found:
 - Use Glob to find the starter deck at `**/claude-french/data/starter_deck.json`.
@@ -298,7 +298,7 @@ Log the session to `french_stats.json` (see Step 6).
 
 After any practice mode ends, update `french_stats.json`.
 
-Use Glob to find `**/memory/french_stats.json` in `~/.claude/projects/`. If not found, create it at the same directory as `french_config.json` with `{ "sessions": [] }`.
+Read `~/.claude/french/french_stats.json`. If not found, create it at `~/.claude/french/french_stats.json` with `{ "sessions": [] }`.
 
 Append a session entry:
 
