@@ -8,14 +8,12 @@ RED="\033[0;31m"
 GREEN="\033[0;32m"
 YELLOW="\033[0;33m"
 BLUE="\033[0;34m"
-MAGENTA="\033[0;35m"
 CYAN="\033[0;36m"
 WHITE="\033[1;37m"
-BG_GREEN="\033[42m"
-BG_BLUE="\033[44m"
 
 REPO_URL="https://github.com/namearth5005/claude-french.git"
-INSTALL_DIR="$HOME/.claude/plugins/cache/namearth5005/claude-french/1.0.0"
+REPO_DIR="$HOME/.claude/french/repo"
+SKILLS_DIR="$HOME/.claude/skills"
 DATA_DIR="$HOME/.claude/french"
 SETTINGS_FILE="$HOME/.claude/settings.json"
 
@@ -72,14 +70,6 @@ if ! command -v git >/dev/null 2>&1; then
 fi
 ok "git"
 
-if command -v npm >/dev/null 2>&1; then
-  ok "npm"
-  HAS_NPM=true
-else
-  skip "npm not found (optional — needed for full FSRS support)"
-  HAS_NPM=false
-fi
-
 if command -v jq >/dev/null 2>&1; then
   ok "jq"
 elif command -v python3 >/dev/null 2>&1; then
@@ -89,23 +79,36 @@ else
 fi
 
 
-step "Install plugin"
+step "Download"
 
-if [ -d "$INSTALL_DIR/.git" ]; then
+if [ -d "$REPO_DIR/.git" ]; then
   note "Existing installation found, updating..."
-  cd "$INSTALL_DIR" && git pull --ff-only --quiet 2>/dev/null
+  cd "$REPO_DIR" && git pull --ff-only --quiet 2>/dev/null
   ok "Updated to latest"
 else
-  mkdir -p "$(dirname "$INSTALL_DIR")"
-  git clone --quiet "$REPO_URL" "$INSTALL_DIR" 2>/dev/null
-  ok "Cloned to ~/.claude/plugins/cache/claude-french/"
+  mkdir -p "$REPO_DIR"
+  git clone --quiet "$REPO_URL" "$REPO_DIR" 2>/dev/null
+  ok "Downloaded to ~/.claude/french/repo/"
 fi
 
-if [ "$HAS_NPM" = true ]; then
-  cd "$INSTALL_DIR"
-  npm install --production --silent 2>/dev/null
-  ok "Dependencies installed"
-fi
+
+step "Install skills"
+
+mkdir -p "$SKILLS_DIR"
+
+for skill_dir in "$REPO_DIR"/skills/*/; do
+  skill_name=$(basename "$skill_dir")
+  target="$SKILLS_DIR/$skill_name"
+
+  if [ -L "$target" ]; then
+    rm "$target"
+  fi
+
+  ln -sf "$skill_dir" "$target"
+  ok "$skill_name"
+done
+
+note "Skills symlinked to ~/.claude/skills/"
 
 
 step "Initialize data"
@@ -113,8 +116,8 @@ step "Initialize data"
 mkdir -p "$DATA_DIR"
 
 if [ ! -f "$DATA_DIR/french_config.json" ]; then
-  cp "$INSTALL_DIR/data/default_config.json" "$DATA_DIR/french_config.json"
-  ok "Config created at ~/.claude/french/"
+  cp "$REPO_DIR/data/default_config.json" "$DATA_DIR/french_config.json"
+  ok "Config created"
 else
   skip "Config already exists"
 fi
@@ -143,56 +146,11 @@ else
 fi
 
 if [ "$SEED_DECK" = "y" ] || [ "$SEED_DECK" = "Y" ] || [ "$SEED_DECK" = "" ]; then
-  cp "$INSTALL_DIR/data/starter_deck.json" "$DATA_DIR/french_flashcards.json"
+  cp "$REPO_DIR/data/starter_deck.json" "$DATA_DIR/french_flashcards.json"
   ok "50 beginner cards loaded"
 else
   skip "Starter deck skipped"
 fi
-
-
-step "Register plugin"
-
-mkdir -p "$(dirname "$SETTINGS_FILE")"
-
-register_plugin() {
-  if [ ! -f "$SETTINGS_FILE" ]; then
-    printf '{\n  "enabledPlugins": {\n    "claude-french@namearth5005": true\n  }\n}\n' > "$SETTINGS_FILE"
-    ok "Created settings.json with plugin enabled"
-    return 0
-  fi
-
-  if command -v jq >/dev/null 2>&1; then
-    TEMP_FILE=$(mktemp)
-    if jq '.enabledPlugins["claude-french@namearth5005"] = true' "$SETTINGS_FILE" > "$TEMP_FILE" 2>/dev/null; then
-      mv "$TEMP_FILE" "$SETTINGS_FILE"
-      ok "Plugin registered in settings.json"
-      return 0
-    fi
-    rm -f "$TEMP_FILE"
-  fi
-
-  if command -v python3 >/dev/null 2>&1; then
-    python3 -c "
-import json
-with open('$SETTINGS_FILE', 'r') as f:
-    data = json.load(f)
-if 'enabledPlugins' not in data:
-    data['enabledPlugins'] = {}
-data['enabledPlugins']['claude-french@namearth5005'] = True
-with open('$SETTINGS_FILE', 'w') as f:
-    json.dump(data, f, indent=2)
-    f.write('\n')
-" 2>/dev/null && ok "Plugin registered in settings.json" && return 0
-  fi
-
-  printf "\n"
-  printf "  ${YELLOW}Manual step needed:${RESET}\n"
-  printf "  Add this to ${BOLD}~/.claude/settings.json${RESET} under enabledPlugins:\n"
-  printf "  ${DIM}\"claude-french@namearth5005\": true${RESET}\n"
-  return 0
-}
-
-register_plugin
 
 
 step "Done"
@@ -208,14 +166,11 @@ cat <<'DONE'
 DONE
 printf "${RESET}"
 printf "\n"
-printf "  ${BOLD}Commands${RESET}\n"
+printf "  ${BOLD}Restart Claude Code${RESET}, then try:\n"
 printf "\n"
 printf "    ${CYAN}/french-settings${RESET}   Configure level, frequency, topics\n"
 printf "    ${CYAN}/french${RESET}            Practice conversation, scenarios, drills\n"
 printf "    ${CYAN}/flashcards${RESET}        Review cards with spaced repetition\n"
-printf "\n"
-printf "  ${DIM}French immersion is ${RESET}${GREEN}ON${RESET}${DIM} by default.${RESET}\n"
-printf "  ${DIM}Pause anytime: ${RESET}/french-settings frequency off\n"
 printf "\n"
 printf "  ${DIM}Bonne chance ! 🇫🇷${RESET}\n"
 printf "\n"
