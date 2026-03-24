@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nambouchara/claude-french"
+    "url": "https://github.com/namearth5005/claude-french"
   },
   "dependencies": {
     "ts-fsrs": "^5.2.3"

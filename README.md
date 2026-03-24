@@ -5,7 +5,7 @@
 A Claude Code plugin that teaches French through passive immersion, active practice, and Anki-powered flashcards -- all without leaving your terminal.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet.svg)](https://github.com/nambouchara/claude-french)
+[![Claude Code Plugin](https://img.shields.io/badge/Claude_Code-Plugin-blueviolet.svg)](https://github.com/namearth5005/claude-french)
 
 ---
 
@@ -63,7 +63,7 @@ Claude: I found the issue -- a missing null check on line 42.
 ## Installation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nambouchara/claude-french/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/namearth5005/claude-french/main/scripts/install.sh | bash
 ```
 
 The installer will:
@@ -270,7 +270,7 @@ Contributions are welcome. Here are some ways to help:
 ### Development
 
 ```bash
-git clone https://github.com/nambouchara/claude-french.git
+git clone https://github.com/namearth5005/claude-french.git
 cd claude-french
 npm install
 ```

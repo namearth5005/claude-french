@@ -3,10 +3,10 @@
   "description": "Learn French inside Claude Code — immersion, practice, and Anki-powered flashcards",
   "version": "1.0.0",
   "author": {
-    "name": "nambouchara"
+    "name": "namearth5005"
   },
-  "homepage": "https://github.com/nambouchara/claude-french",
-  "repository": "https://github.com/nambouchara/claude-french",
+  "homepage": "https://github.com/namearth5005/claude-french",
+  "repository": "https://github.com/namearth5005/claude-french",
   "license": "MIT",
   "keywords": ["french", "language-learning", "flashcards", "immersion", "fsrs"]
 }

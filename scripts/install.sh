@@ -7,7 +7,7 @@ CYAN="\033[0;36m"
 BOLD="\033[1m"
 RESET="\033[0m"
 
-REPO_URL="https://github.com/nambouchara/claude-french.git"
+REPO_URL="https://github.com/namearth5005/claude-french.git"
 INSTALL_DIR="$HOME/.claude/plugins/cache/claude-french/1.0.0"
 DATA_DIR="$HOME/.claude/french"
 SETTINGS_FILE="$HOME/.claude/settings.json"
@@ -107,12 +107,12 @@ info "Registering plugin in Claude settings..."
 mkdir -p "$(dirname "$SETTINGS_FILE")"
 
 if [ ! -f "$SETTINGS_FILE" ]; then
-  printf '{\n  "enabledPlugins": {\n    "claude-french@nambouchara": true\n  }\n}\n' > "$SETTINGS_FILE"
+  printf '{\n  "enabledPlugins": {\n    "claude-french@namearth5005": true\n  }\n}\n' > "$SETTINGS_FILE"
   success "  Created settings.json with plugin enabled"
 else
   if command -v jq >/dev/null 2>&1; then
     TEMP_FILE=$(mktemp)
-    if jq '.enabledPlugins["claude-french@nambouchara"] = true' "$SETTINGS_FILE" > "$TEMP_FILE" 2>/dev/null; then
+    if jq '.enabledPlugins["claude-french@namearth5005"] = true' "$SETTINGS_FILE" > "$TEMP_FILE" 2>/dev/null; then
       mv "$TEMP_FILE" "$SETTINGS_FILE"
       success "  Plugin registered via jq"
     else
@@ -125,13 +125,13 @@ with open('$SETTINGS_FILE', 'r') as f:
     data = json.load(f)
 if 'enabledPlugins' not in data:
     data['enabledPlugins'] = {}
-data['enabledPlugins']['claude-french@nambouchara'] = True
+data['enabledPlugins']['claude-french@namearth5005'] = True
 with open('$SETTINGS_FILE', 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
-" && success "  Plugin registered via python3" || warn "  Could not update settings.json automatically. Please add \"claude-french@nambouchara\": true to enabledPlugins in $SETTINGS_FILE"
+" && success "  Plugin registered via python3" || warn "  Could not update settings.json automatically. Please add \"claude-french@namearth5005\": true to enabledPlugins in $SETTINGS_FILE"
       else
-        warn "  Neither jq nor python3 found. Please add \"claude-french@nambouchara\": true to enabledPlugins in $SETTINGS_FILE"
+        warn "  Neither jq nor python3 found. Please add \"claude-french@namearth5005\": true to enabledPlugins in $SETTINGS_FILE"
       fi
     fi
   elif command -v python3 >/dev/null 2>&1; then
@@ -141,13 +141,13 @@ with open('$SETTINGS_FILE', 'r') as f:
     data = json.load(f)
 if 'enabledPlugins' not in data:
     data['enabledPlugins'] = {}
-data['enabledPlugins']['claude-french@nambouchara'] = True
+data['enabledPlugins']['claude-french@namearth5005'] = True
 with open('$SETTINGS_FILE', 'w') as f:
     json.dump(data, f, indent=2)
     f.write('\n')
-" && success "  Plugin registered via python3" || warn "  Could not update settings.json automatically. Please add \"claude-french@nambouchara\": true to enabledPlugins in $SETTINGS_FILE"
+" && success "  Plugin registered via python3" || warn "  Could not update settings.json automatically. Please add \"claude-french@namearth5005\": true to enabledPlugins in $SETTINGS_FILE"
   else
-    warn "  Neither jq nor python3 found. Please add \"claude-french@nambouchara\": true to enabledPlugins in $SETTINGS_FILE"
+    warn "  Neither jq nor python3 found. Please add \"claude-french@namearth5005\": true to enabledPlugins in $SETTINGS_FILE"
   fi
 fi
 
