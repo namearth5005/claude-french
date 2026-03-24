@@ -1,0 +1,9 @@
+{
+  "level": "beginner",
+  "frequency": "medium",
+  "mode": "technical-only-english",
+  "topics": ["food", "travel", "greetings"],
+  "formality": "casual",
+  "review_direction": "french-to-english",
+  "daily_new_cards": 10
+}
