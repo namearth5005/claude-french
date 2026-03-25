@@ -14,15 +14,18 @@ You are running an Anki-style spaced repetition flashcard session. Be concise an
 Read the flashcard deck directly:
 - Path: `~/.claude/french/french_flashcards.json`
 
-If the file is not found or is empty (or contains `{"cards": []}`), ask the user:
+If the file is not found or is empty (or contains `{"cards": []}`), use `AskUserQuestion`:
 
-```
-No flashcard deck found. Would you like to seed it from the starter deck (50 beginner cards)?
-```
+**"No flashcard deck found. Start with a starter deck?"**
 
-If yes, use Glob to find the plugin's starter deck at `**/claude-french/data/starter_deck.json`, read it, then write its contents to `~/.claude/french/french_flashcards.json`.
+| Label | Description |
+|-------|-------------|
+| Seed starter deck | Load 50 beginner cards for immediate review |
+| Start empty | Create a blank deck — add cards manually with /flashcards add |
 
-If no, create an empty deck: `{ "cards": [] }`.
+If "Seed starter deck": use Glob to find the plugin's starter deck at `**/claude-french/data/starter_deck.json`, read it, then write its contents to `~/.claude/french/french_flashcards.json`.
+
+If "Start empty": create an empty deck: `{ "cards": [] }`.
 
 ### Load config
 
@@ -102,15 +105,26 @@ Wait for the user to say "flip", "f", "show", or any indication they want to see
 │                                             │
 │  Last seen: {last_seen}   Streak: {streak}  │
 ╰─────────────────────────────────────────────╯
-
-  (1) Again  (2) Hard  (3) Good  (4) Easy
 ```
 
 The `{level}` tag shows the card's `level` field (e.g., "beginner", "custom").
 
+Then use `AskUserQuestion` to collect the rating:
+
+**"How well did you know this?"**
+
+| Label | Description |
+|-------|-------------|
+| Again | Didn't know it — review again soon (1 day) |
+| Hard | Struggled but got it — short interval |
+| Good | Knew it with some effort — standard interval |
+| Easy | Instant recall — longer interval |
+
+The user can also type 1-4 or the words via "Other".
+
 ## Step 5: Process Rating
 
-Accept the user's rating as a number 1-4, or the words "again", "hard", "good", "easy" (case-insensitive). If input is invalid, ask again.
+Map the AskUserQuestion selection to a rating: Again=1, Hard=2, Good=3, Easy=4. Also accept raw numbers 1-4 or words via "Other" input (case-insensitive). If input is invalid, ask again.
 
 Initialize session counters on the first card if not already done:
 - `session_reviewed = 0`

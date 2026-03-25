@@ -44,28 +44,27 @@ Use Glob to find `**/claude-french/data/scenarios.json`. Read it to get the scen
 
 Pick one random scenario from the loaded scenarios list (filtered to the user's configured level and topics if possible; if no match, pick any). Use its `title` for the menu display.
 
-Render:
+Show a status line first:
 
 ```
-╭─ French Practice ───────────────────────────╮
-│                                             │
-│  (1)  Conversation libre                    │
-│  (2)  Scenario -- {scenario_title}          │
-│  (3)  Vocabulary drills                     │
-│  (4)  Review flashcards                     │
-│                                             │
-│  Cards due: {cards_due}    Streak: {streak} days  │
-╰─────────────────────────────────────────────╯
+Cards due: {cards_due}    Streak: {streak} days
 ```
 
-Keep the box width at 47 characters including borders. Right-pad lines with spaces so `│` aligns at column 47.
+Then use `AskUserQuestion` to present the practice modes:
 
-Wait for the user to pick 1, 2, 3, or 4.
+| Label | Description |
+|-------|-------------|
+| Conversation libre | Free-form French conversation at your level |
+| Scenario -- {scenario_title} | Guided role-play with vocabulary tips |
+| Vocabulary drills | 10-question translation quiz from your deck |
+| Review flashcards | Spaced repetition review (launches /flashcards) |
 
-- If 4: tell the user to run `/flashcards` to start a flashcard review session, then stop.
-- If 1: go to Conversation Libre (Step 3).
-- If 2: go to Scenarios (Step 4).
-- If 3: go to Vocabulary Drills (Step 5).
+Route based on selection:
+
+- If "Review flashcards": tell the user to run `/flashcards` to start a flashcard review session, then stop.
+- If "Conversation libre": go to Step 3.
+- If "Scenario": go to Step 4.
+- If "Vocabulary drills": go to Step 5.
 
 ## Step 3: Conversation Libre
 
@@ -128,13 +127,21 @@ When the user types "done", "quit", "exit", "stop", or "fini":
 │    {french_2} -- {english_2}                │
 │    {french_3} -- {english_3}                │
 │                                             │
-│  Save to flashcards? (y/n)                  │
 ╰─────────────────────────────────────────────╯
 ```
 
 If `session_vocab` is empty, replace the word list with "No new vocabulary this session." and skip the save prompt.
 
-2. If the user says yes (y/yes/oui): add each word from `session_vocab` as a new flashcard. Read `~/.claude/french/french_flashcards.json`, append cards, and write it back. Each card:
+If `session_vocab` is not empty, use `AskUserQuestion` to ask:
+
+**"Save {N} new words to your flashcard deck?"**
+
+| Label | Description |
+|-------|-------------|
+| Save to deck | Add all {N} words for spaced repetition review |
+| Skip | Don't save — you can always add them later with /flashcards add |
+
+2. If the user picks "Save to deck": add each word from `session_vocab` as a new flashcard. Read `~/.claude/french/french_flashcards.json`, append cards, and write it back. Each card:
 
 ```json
 {
@@ -169,19 +176,17 @@ Load scenarios from `data/scenarios.json` (found via Glob for `**/claude-french/
 
 Filter by the user's configured `level` and `topics`. If no scenarios match the filter, show all scenarios and note that none matched their current settings.
 
-Present available scenarios (up to 8):
+Present available scenarios using `AskUserQuestion`. Since the tool allows 2-4 options, show up to 4 matching scenarios. Use each scenario's `title` as the label and `description` as the description.
 
-```
-╭─ Scenarios ─────────────────────────────────╮
-│                                             │
-│  (1)  Au cafe -- Order coffee and pastry    │
-│  (2)  La gare -- Buy a train ticket         │
-│  (3)  L'hotel -- Check into your hotel      │
-│                                             │
-╰─────────────────────────────────────────────╯
-```
+For example:
 
-Use the scenario's `title` and `description` for each line. Wait for the user to pick a number.
+| Label | Description |
+|-------|-------------|
+| Au cafe | Order coffee and a pastry |
+| La gare | Buy a train ticket |
+| L'hotel | Check into your hotel |
+
+If more than 4 scenarios match, pick the 4 most relevant to the user's configured topics. The user can type a different scenario name via "Other".
 
 ### Running a Scenario
 
@@ -294,6 +299,15 @@ Save the updated deck (with any difficulty bumps) using the Write tool.
 
 Log the session to `french_stats.json` (see Step 6).
 
+Then use `AskUserQuestion`:
+
+**"What's next?"**
+
+| Label | Description |
+|-------|-------------|
+| Back to menu | Return to the main practice menu |
+| Done | End the practice session |
+
 ## Step 6: Session Logging
 
 After any practice mode ends, update `french_stats.json`.
@@ -316,7 +330,7 @@ Write the updated file with 2-space indentation.
 
 This is the shared save flow used by Conversation Libre and Scenarios.
 
-When the user confirms saving (y/yes/oui), for each word in `session_vocab`:
+When the user confirms saving (via AskUserQuestion "Save to deck" or typing y/yes/oui), for each word in `session_vocab`:
 
 1. Check if a card with the same `french` text already exists in the deck (case-insensitive). Skip duplicates.
 2. Create the card using the format specified in Step 3.
