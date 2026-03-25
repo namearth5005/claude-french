@@ -1,6 +1,8 @@
 ---
 name: french-flashcards
 description: "Review French flashcards with Anki-powered spaced repetition (FSRS). Use when the user types /flashcards or wants to review, add, or manage their French vocabulary cards."
+model: haiku
+effort: low
 ---
 
 # French Flashcards

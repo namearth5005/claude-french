@@ -1,6 +1,7 @@
 ---
 name: french-practice
 description: "Active French practice -- conversation, role-play scenarios, and vocabulary drills. Use when the user types /french or wants to practice their French."
+model: sonnet
 ---
 
 # French Practice

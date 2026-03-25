@@ -1,6 +1,8 @@
 ---
 name: french-settings
 description: "Configure French immersion settings — level, frequency, topics, formality, and more. Use when the user types /french-settings or wants to adjust their French learning preferences."
+model: haiku
+effort: low
 ---
 
 # French Settings (Interactive)
