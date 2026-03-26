@@ -79,50 +79,43 @@ Build the streak indicator: count consecutive reviews where the card was NOT lap
 
 Compute "last seen": if `last_review` is null, show "new card". Otherwise compute the number of days between today and `last_review` and show "today", "yesterday", "N days ago", etc.
 
-Display the card — first show only the prompt side:
+Display the full card (both prompt and answer together) and immediately ask for the rating in a single `AskUserQuestion` call. This creates a one-click-per-card flow with zero friction.
+
+Use the `preview` feature of `AskUserQuestion` to show the card in the preview pane of each rating option. The card text goes in the question itself, and each option represents a rating.
+
+Show the card as part of the question text:
 
 ```
-╭─────────────────────────────────────────────╮
-│  FLASHCARD  {n}/{total}       {progress}    │
-├─────────────────────────────────────────────┤
-│                                             │
-│          {prompt text}                      │
-│                                             │
-╰─────────────────────────────────────────────╯
+{prompt text} → {answer text}
 
-Think of the answer, then say "flip" or "f" to reveal.
+Card {n}/{total} · {progress} · Last seen: {last_seen} · Streak: {streak}
 ```
 
-Wait for the user to say "flip", "f", "show", or any indication they want to see the answer. Then reveal:
+Then use `AskUserQuestion` with the question containing the card display:
 
-```
-╭─────────────────────────────────────────────╮
-│  FLASHCARD  {n}/{total}       {progress}    │
-├─────────────────────────────────────────────┤
-│                                             │
-│          {prompt text}                      │
-│                                             │
-│  ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─  │
-│  {answer text}                   [{level}]  │
-│                                             │
-│  Last seen: {last_seen}   Streak: {streak}  │
-╰─────────────────────────────────────────────╯
-```
-
-The `{level}` tag shows the card's `level` field (e.g., "beginner", "custom").
-
-Then use `AskUserQuestion` to collect the rating:
-
-**"How well did you know this?"**
+**"{prompt_text} → ?"**
 
 | Label | Description |
 |-------|-------------|
-| Again | Didn't know it — review again soon (1 day) |
-| Hard | Struggled but got it — short interval |
-| Good | Knew it with some effort — standard interval |
-| Easy | Instant recall — longer interval |
+| Again | {answer_text} — Didn't know it (1 day) |
+| Hard | {answer_text} — Struggled (short interval) |
+| Good | {answer_text} — Knew it (standard interval) |
+| Easy | {answer_text} — Instant recall (longer interval) |
 
-The user can also type 1-4 or the words via "Other".
+Use previews on each option to show the full card context:
+
+Each option's `preview` field should contain:
+```
+{prompt_text} → {answer_text}
+
+[{level}] · Last seen: {last_seen}
+Streak: {streak_dots}
+Card {n}/{total}  {progress_dots}
+```
+
+This way the user sees the French word as the question header, the answer is revealed in every option's description, and they rate with a single click. No separate flip step.
+
+The user can type "quit" or "stop" via "Other" to end the session early.
 
 ## Step 5: Process Rating
 

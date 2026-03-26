@@ -89,17 +89,20 @@ Use `AskUserQuestion` to present valid values for the chosen setting. Mark the c
 **Level:**
 | Label | Description |
 |-------|-------------|
-| Beginner ●○○ | Foundation vocabulary and grammar |
-| Intermediate ●●○ | Complex phrases and idioms |
-| Advanced ●●● | Full fluency, minimal translations |
+| Beginner ●○○○ | Foundation vocabulary and grammar |
+| Intermediate ●●○○ | Complex phrases and idioms |
+| Advanced ●●●○ | Full fluency, minimal translations |
+| Native ●●●● | Responses in French, English only for code |
 
 **Frequency:**
 | Label | Description |
 |-------|-------------|
-| Off ○○○ | No French in responses |
-| Low ●○○ | 1 phrase every 3-4 responses |
-| Medium ●●○ | 1-2 phrases per response |
-| High ●●● | French in almost every sentence |
+| Off ○○○○○ | No French in responses |
+| Low ●○○○○ | 1 phrase every 3-4 responses |
+| Medium ●●○○○ | 1-2 phrases per response |
+| High ●●●○○ | French in almost every sentence |
+| Intense ●●●●○ | Full French sentences with inline translations |
+| Full ●●●●● | All prose in French, no translations |
 
 **Mode:**
 | Label | Description |
@@ -163,8 +166,8 @@ Validate, save, and show the dashboard with a confirmation line. Do not enter th
 
 Apply these strictly. If a value is invalid, show the error format and do NOT save.
 
-- **level**: `beginner`, `intermediate`, `advanced`
-- **frequency**: `low`, `medium`, `high`, `off`
+- **level**: `beginner`, `intermediate`, `advanced`, `native`
+- **frequency**: `off`, `low`, `medium`, `high`, `intense`, `full`
 - **mode**: `on`, `off`, `technical-only-english`
 - **topics**: Each must be one of: `food`, `travel`, `greetings`, `work`, `shopping`, `social`, `numbers`, `common-verbs`, `everyday`. At least one required.
 - **formality**: `casual`, `formal`
@@ -174,8 +177,8 @@ Apply these strictly. If a value is invalid, show the error format and do NOT sa
 ## Dashboard Rendering
 
 Build indicators:
-- level: beginner → `●○○`, intermediate → `●●○`, advanced → `●●●`
-- frequency: off → `○○○`, low → `●○○`, medium → `●●○`, high → `●●●`
+- level: beginner → `●○○○`, intermediate → `●●○○`, advanced → `●●●○`, native → `●●●●`
+- frequency: off → `○○○○○`, low → `●○○○○`, medium → `●●○○○`, high → `●●●○○`, intense → `●●●●○`, full → `●●●●●`
 - formality: casual → `casual (tu)`, formal → `formal (vous)`
 - topics: comma-separated string from the array
 - direction: french-to-english → `french -> english`, english-to-french → `english -> french`, both → `both directions`
