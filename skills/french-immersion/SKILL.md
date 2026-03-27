@@ -30,7 +30,7 @@ The `frequency` config controls how often French appears:
 - **`low`**: Use 1 French phrase every 3-4 responses. Most responses are pure English. When you do use French, keep it to a single word or short phrase.
 - **`medium`**: Use 1-2 French phrases per response. This is the default. Sprinkle naturally -- greetings, transitions, affirmations.
 - **`high`**: Use French extensively. Almost every sentence should contain some French. Longer phrases, full sentences where appropriate. Still provide translations.
-- **`intense`**: Write full sentences in French throughout your response. Prose should be primarily French with inline English translations in parentheses for non-obvious vocabulary. English is still used for code blocks, file paths, and technical identifiers, but all surrounding explanation and commentary is in French. Example: "J'ai trouvé le bug dans le fichier (I found the bug in the file). La fonction `processData` ne gère pas les cas null (doesn't handle null cases). Voici le correctif (Here's the fix):"
+- **`intense`**: Write full sentences in French throughout your response. Prose should be primarily French with inline English translations in parentheses for ALL French words and phrases — every piece of French must have a translation. This is the key difference from `full`: at `intense`, the user always has the English safety net. English is still used for code blocks, file paths, and technical identifiers, but all surrounding explanation and commentary is in French with systematic translations. Example: "J'ai trouvé le bug dans le fichier (I found the bug in the file). La fonction `processData` ne gère pas (doesn't handle) les cas null (null cases). Voici le correctif (Here's the fix):"
 - **`full`**: All prose is written in French with NO translations. This is total immersion — you write as if the user is fluent. English appears only inside code blocks, for file paths, command names, and technical terms that have no standard French equivalent. If the user doesn't understand something, they can ask. Example: "J'ai trouvé le bug. La fonction `processData` ne gère pas les cas null. Voici le correctif :"
 
 ### Mode
@@ -243,12 +243,16 @@ Use three dashes for the top and bottom rules. Include `fr` as a language tag on
 
 ### Mode 2: Guided Immersion (frequency = intense, OR level = native with frequency < full)
 
-Write prose primarily in French. Provide inline English translations in parentheses for vocabulary the user may not know (based on their level). Code, file paths, and commands remain in English.
+Write prose primarily in French. Code, file paths, and commands remain in English.
 
-Example:
+**Translation rules for this mode depend on frequency:**
+- **`intense`**: Translate ALL French — every word and phrase gets an English translation in parentheses. No exceptions. The user should never have to guess what a French word means. This is the defining feature of `intense` vs `full`.
+- **Other frequencies in this mode** (e.g., native level with frequency < full): Translate based on the user's `level` setting (beginner = all, intermediate = non-obvious, advanced = rarely).
+
+Example (intense):
 ```
-J'ai regardé le code (I looked at the code) et j'ai trouvé le problème.
-La fonction `validateInput` ne vérifie pas les cas null (doesn't check null cases).
+J'ai regardé le code (I looked at the code) et j'ai trouvé (and I found) le problème (the problem).
+La fonction `validateInput` ne vérifie pas (doesn't check) les cas null (null cases).
 Voici le correctif (Here's the fix):
 ```
 
@@ -273,7 +277,7 @@ Write as a French-speaking developer naturally would. Use spoken French patterns
 
 - Never put French inside code blocks, file paths, command names, or technical identifiers.
 - Never use French for error messages, warnings, or critical information (except in Mode 3 where even errors are explained in French, though the actual error text/stack trace remains as-is).
-- At beginner level, translate everything. At intermediate, skip translations for words used 3+ times in the session. At advanced, translate sparingly. At native, never translate.
+- At `intense` frequency, translate EVERYTHING regardless of level. Otherwise: at beginner level, translate everything. At intermediate, skip translations for words used 3+ times in the session. At advanced, translate sparingly. At native, never translate.
 
 ## Step 5: Contextual Intelligence
 
@@ -356,11 +360,124 @@ Maintain an internal list of French phrases you have already used in this sessio
 
 Rotate through the vocabulary banks. If you used "*parfait*" in your last French-containing response, choose a different affirmation next time ("*tres bien*", "*c'est bon*", "*exactement*").
 
+## Step 8: French Correction
+
+When the user writes French (even mixed with English), scan their message for errors and provide inline corrections at the beginning of your response before any other content.
+
+### What to Correct
+
+- **Orthographe** (Spelling): accents, doubled letters, common misspellings
+- **Grammaire** (Grammar): gender agreement, plural agreement, article usage
+- **Conjugaison** (Conjugation): verb tense, person agreement, irregular forms
+- **Faux amis** (False cognates): English words incorrectly used as French (e.g., "capabilité" → "capacité")
+- **Syntaxe** (Syntax): word order, preposition usage
+
+### What NOT to Correct
+
+- Style preferences or regional variations (both are valid French)
+- English portions of mixed-language messages
+- Code, file paths, or technical identifiers
+- Informal/spoken patterns that are valid at the user's level (e.g., dropped "ne" at native level)
+
+### Correction Format
+
+Use a blockquote at the top of your response:
+
+```
+> 📝 **Correction** : « [full corrected sentence] »
+> - *[error] → [correction]* — [brief grammar note]
+> - *[error] → [correction]* — [brief grammar note]
+```
+
+**Rules:**
+- Show the full corrected sentence first, then list individual corrections below
+- Keep grammar notes brief (5-10 words) — e.g., "faux ami de l'anglais", "accord féminin pluriel", "conjugaison présent 1ère personne"
+- At beginner level, add slightly more explanation. At advanced/native, keep notes minimal
+- If the message is entirely in English, skip correction entirely
+- If there are no errors in the French portions, skip the correction block — do not praise or comment on correctness
+- Maximum 5 corrections per message — if there are more, correct the 5 most important ones
+
+### Adaptation to Frequency
+
+- At `intense` frequency: provide translations for grammar terms in the correction notes (e.g., "accord féminin pluriel (feminine plural agreement)")
+- At `full` frequency: correction notes are entirely in French, no translations
+- At other frequencies: correction notes follow the standard translation rules for the user's level
+
+## Step 9: Interactive Flashcard Suggestions
+
+After correcting the user's French (Step 8), offer to add the corrected words/phrases to their flashcard deck using an interactive prompt.
+
+### When to Trigger
+
+- Only when Step 8 produced corrections (i.e., the user made errors)
+- Only when `~/.claude/french/french_flashcards.json` exists
+- NOT when the user seems frustrated, in a hurry, or dealing with a critical task
+- NOT if all corrected words already exist in the flashcard deck
+
+### Process
+
+1. Read `~/.claude/french/french_flashcards.json`
+2. For each corrected word/phrase from Step 8, check if it already exists in the deck (case-insensitive, ignore accents)
+3. Filter out duplicates — only suggest words that are NOT already in the deck
+4. If there are new words to suggest (max 4 at a time due to option limits), present them using `AskUserQuestion` with `multiSelect: true`
+5. If the user selects words, add them to the flashcard deck with `"source": "correction"`
+6. If the user selects none or skips, do nothing
+
+### AskUserQuestion Format
+
+```json
+{
+  "question": "Ajouter à tes flashcards ? (Add to your flashcards?)",
+  "header": "Flashcards",
+  "multiSelect": true,
+  "options": [
+    {"label": "[french word]", "description": "[english] — from your correction"},
+    ...
+    {"label": "Passer (Skip)", "description": "Don't add any cards this time"}
+  ]
+}
+```
+
+Note: "Passer (Skip)" counts as one of the max 4 options, so suggest at most 3 words per prompt. If there are more than 3 new words, prioritize the most useful/common ones.
+
+### Flashcard Card Format
+
+Cards added via this feature use the same format as Step 6, but with `"source": "correction"`:
+
+```json
+{
+  "id": "correction-{timestamp_ms}",
+  "french": "{the corrected French word/phrase}",
+  "english": "{the English translation}",
+  "level": "{based on word complexity}",
+  "topic": "{most relevant topic from config, or 'general'}",
+  "source": "correction",
+  "stability": 0,
+  "difficulty": 5.0,
+  "reps": 0,
+  "lapses": 0,
+  "state": "new",
+  "scheduled_days": 0,
+  "elapsed_days": 0,
+  "last_review": null,
+  "next_review": null,
+  "created": "{today YYYY-MM-DD}"
+}
+```
+
+### What NOT to Do
+
+- Never suggest flashcards when no corrections were made
+- Never auto-add cards without asking — always use the interactive prompt
+- Never suggest more than 3 words at a time (plus the Skip option = 4 options max)
+- Never block the user's workflow — if they skip, move on immediately
+- Keep the interaction lightweight — one prompt, then done
+
 ## Summary of Rules
 
 1. Read the config once at session start. Respect `frequency`, `mode`, `level`, `formality`, and `topics`.
 2. Use French naturally in prose, never in code or technical identifiers.
-3. Always translate (at beginner), selectively translate (at intermediate), rarely translate (at advanced), never translate (at native).
+3. At `intense` frequency: translate ALL French, every word and phrase — no exceptions. Otherwise: always translate (at beginner), selectively translate (at intermediate), rarely translate (at advanced), never translate (at native).
 4. Skip French entirely during complex technical explanations when mode is `technical-only-english`.
 5. Skip French when the user is frustrated or dealing with errors (except at `full` frequency / `native` level — then still use French but simplify vocabulary and be extra clear).
 6. At low/medium/high frequency: mix inline and callout styles, favoring inline. At intense/full: write prose in French directly.
@@ -370,3 +487,5 @@ Rotate through the vocabulary banks. If you used "*parfait*" in your last French
 10. Draw from topic-relevant vocabulary when the context allows.
 11. At `native` level: use spoken French patterns (dropped "ne", contractions, "on" for "nous", dislocations, fillers like "du coup", "genre", "quoi"). Sound like a real French developer, not a textbook.
 12. At `full` frequency: never provide English translations. The user is expected to understand or ask.
+13. Correct the user's French inline at the top of responses (Step 8). Show corrected sentence + brief grammar notes.
+14. After corrections, offer to add corrected words to flashcards via interactive prompt (Step 9). Max 3 words + skip option.
