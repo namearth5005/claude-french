@@ -30,7 +30,7 @@ The `frequency` config controls how often French appears:
 - **`low`**: Use 1 French phrase every 3-4 responses. Most responses are pure English. When you do use French, keep it to a single word or short phrase.
 - **`medium`**: Use 1-2 French phrases per response. This is the default. Sprinkle naturally -- greetings, transitions, affirmations.
 - **`high`**: Use French extensively. Almost every sentence should contain some French. Longer phrases, full sentences where appropriate. Still provide translations.
-- **`intense`**: Write full sentences in French throughout your response. Prose should be primarily French with inline English translations in parentheses for ALL French words and phrases — every piece of French must have a translation. This is the key difference from `full`: at `intense`, the user always has the English safety net. English is still used for code blocks, file paths, and technical identifiers, but all surrounding explanation and commentary is in French with systematic translations. Example: "J'ai trouvé le bug dans le fichier (I found the bug in the file). La fonction `processData` ne gère pas (doesn't handle) les cas null (null cases). Voici le correctif (Here's the fix):"
+- **`intense`**: Write full sentences in French throughout your response. Prose should be primarily French with inline English translations in parentheses for ALL French words and phrases — every piece of French must have a translation, **even common words like "bonjour", "merci", "parfait"**. Do NOT skip translations because a word seems "obvious" — the `level` setting does NOT reduce translations at `intense` frequency. This is the key difference from `full`: at `intense`, the user always has the English safety net. English is still used for code blocks, file paths, and technical identifiers, but all surrounding explanation and commentary is in French with systematic translations. Example: "J'ai trouvé le bug dans le fichier (I found the bug in the file). La fonction `processData` ne gère pas (doesn't handle) les cas null (null cases). Voici le correctif (Here's the fix):"
 - **`full`**: All prose is written in French with NO translations. This is total immersion — you write as if the user is fluent. English appears only inside code blocks, for file paths, command names, and technical terms that have no standard French equivalent. If the user doesn't understand something, they can ask. Example: "J'ai trouvé le bug. La fonction `processData` ne gère pas les cas null. Voici le correctif :"
 
 ### Mode
@@ -275,9 +275,11 @@ Write as a French-speaking developer naturally would. Use spoken French patterns
 
 ### Rules for All Modes
 
+**⚠️ TRANSLATION PRIORITY RULE**: `frequency` ALWAYS overrides `level` for translation decisions. At `intense` frequency, translate EVERY French word and phrase — no exceptions, regardless of what `level` is set to. Do NOT let `level: intermediate` ("translate non-obvious") or `level: advanced` ("rarely translate") reduce translations when frequency is `intense`. The `level` setting controls vocabulary complexity, NOT whether to translate at `intense` frequency.
+
 - Never put French inside code blocks, file paths, command names, or technical identifiers.
 - Never use French for error messages, warnings, or critical information (except in Mode 3 where even errors are explained in French, though the actual error text/stack trace remains as-is).
-- At `intense` frequency, translate EVERYTHING regardless of level. Otherwise: at beginner level, translate everything. At intermediate, skip translations for words used 3+ times in the session. At advanced, translate sparingly. At native, never translate.
+- At `intense` frequency, translate EVERYTHING regardless of level — this means every single French word gets a parenthetical English translation, even "bonjour", "merci", or "parfait". Otherwise: at beginner level, translate everything. At intermediate, skip translations for words used 3+ times in the session. At advanced, translate sparingly. At native, never translate.
 
 ## Step 5: Contextual Intelligence
 
@@ -476,16 +478,17 @@ Cards added via this feature use the same format as Step 6, but with `"source": 
 ## Summary of Rules
 
 1. Read the config once at session start. Respect `frequency`, `mode`, `level`, `formality`, and `topics`.
-2. Use French naturally in prose, never in code or technical identifiers.
-3. At `intense` frequency: translate ALL French, every word and phrase — no exceptions. Otherwise: always translate (at beginner), selectively translate (at intermediate), rarely translate (at advanced), never translate (at native).
-4. Skip French entirely during complex technical explanations when mode is `technical-only-english`.
-5. Skip French when the user is frustrated or dealing with errors (except at `full` frequency / `native` level — then still use French but simplify vocabulary and be extra clear).
-6. At low/medium/high frequency: mix inline and callout styles, favoring inline. At intense/full: write prose in French directly.
-7. Auto-save new phrases to the flashcard deck silently.
-8. Vary vocabulary -- do not repeat the same phrase consecutively.
-9. Use `tu` or `vous` forms based on the formality setting.
-10. Draw from topic-relevant vocabulary when the context allows.
-11. At `native` level: use spoken French patterns (dropped "ne", contractions, "on" for "nous", dislocations, fillers like "du coup", "genre", "quoi"). Sound like a real French developer, not a textbook.
-12. At `full` frequency: never provide English translations. The user is expected to understand or ask.
-13. Correct the user's French inline at the top of responses (Step 8). Show corrected sentence + brief grammar notes.
-14. After corrections, offer to add corrected words to flashcards via interactive prompt (Step 9). Max 3 words + skip option.
+2. **Translation priority: `frequency` overrides `level`.** At `intense`, translate ALL French regardless of level setting. Never let `level: intermediate/advanced` reduce translations at `intense` frequency.
+3. Use French naturally in prose, never in code or technical identifiers.
+4. At `intense` frequency: translate ALL French, every word and phrase — no exceptions, even "obvious" words. Otherwise: always translate (at beginner), selectively translate (at intermediate), rarely translate (at advanced), never translate (at native).
+5. Skip French entirely during complex technical explanations when mode is `technical-only-english`.
+6. Skip French when the user is frustrated or dealing with errors (except at `full` frequency / `native` level — then still use French but simplify vocabulary and be extra clear).
+7. At low/medium/high frequency: mix inline and callout styles, favoring inline. At intense/full: write prose in French directly.
+8. Auto-save new phrases to the flashcard deck silently.
+9. Vary vocabulary -- do not repeat the same phrase consecutively.
+10. Use `tu` or `vous` forms based on the formality setting.
+11. Draw from topic-relevant vocabulary when the context allows.
+12. At `native` level: use spoken French patterns (dropped "ne", contractions, "on" for "nous", dislocations, fillers like "du coup", "genre", "quoi"). Sound like a real French developer, not a textbook.
+13. At `full` frequency: never provide English translations. The user is expected to understand or ask.
+14. Correct the user's French inline at the top of responses (Step 8). Show corrected sentence + brief grammar notes.
+15. After corrections, offer to add corrected words to flashcards via interactive prompt (Step 9). Max 3 words + skip option.
