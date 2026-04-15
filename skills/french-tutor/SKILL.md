@@ -396,17 +396,36 @@ Check for duplicates before adding. Add via the same `addNote` flow as Option 1.
 
 Maintain a running list: `session_vocab = []`.
 
+**Voice Mode**: If VoiceMode MCP tools are available (`mcp__voicemode__converse`), use them for spoken French conversation. Follow these display rules strictly:
+
+1. **ALWAYS print your French text BEFORE speaking it** with a 🔊 prefix:
+   ```
+   🔊 "Salut ! Qu'est-ce qui t'intéresse aujourd'hui ?"
+   ```
+   Then call `mcp__voicemode__converse` with `voice: "ff_siwis"` and `tts_provider: "kokoro"`.
+
+2. **ALWAYS print the user's transcription immediately** with a 🎙️ prefix:
+   ```
+   🎙️ "Je suis en train de tester des applications..."
+   ```
+
+3. Then show corrections (if any), then your next response text, then speak it.
+
+The text display is critical — the user needs to see spelling alongside pronunciation.
+
+If VoiceMode is not available, fall back to text-only conversation.
+
 Greet the user in French calibrated to their level:
 
 - **beginner**: "Bonjour ! De quoi veux-tu parler ? (Hello! What do you want to talk about?)"
-- **intermediate**: "Salut ! Qu'est-ce qui t'interesse aujourd'hui ?"
+- **intermediate**: "Salut ! Qu'est-ce qui t'intéresse aujourd'hui ?"
 - **advanced**: "Salut ! Alors, de quoi on parle aujourd'hui ?"
 
 Use `tu` for casual, `vous` for formal (from config).
 
 ### 5b. Conversation Loop
 
-When the user responds:
+When the user responds (via voice transcription or text):
 
 1. **Correct errors.** If there are grammar, spelling, or vocabulary errors, show a correction before your response:
 
