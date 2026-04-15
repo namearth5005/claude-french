@@ -1,7 +1,7 @@
 {
   "name": "claude-french",
   "version": "1.0.0",
-  "description": "Learn French inside Claude Code — immersion, practice, and Anki-powered flashcards",
+  "description": "Learn French inside Claude Code — AI tutor with Anki flashcard management, conversation practice, and immersion",
   "license": "MIT",
   "repository": {
     "type": "git",
